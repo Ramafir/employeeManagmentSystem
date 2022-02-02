@@ -1,0 +1,171 @@
+<div class="container-xl" id="project-container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-6">
+            <h2>Manage Projects</h2>
+          </div>
+          <div class="col-sm-6">
+            <button [hidden]="!isAdmin" (click)="printReport()" type="button" class="btn btn-primary">Print Report</button>
+            <a [hidden]="!isAdmin" (click)="onOpenModal(null, 'add')" class="btn btn-success" data-toggle="modal">
+              <i class="material-icons">&#xE147;</i>
+              <span>New Project</span>
+            </a>
+            <span>
+              <form class="form-inline mt-2 mt-md-0">
+              <input class="form-control mr-sm-2" (ngModelChange)="searchProjects(key.value)" #key="ngModel" ngModel
+                     type="text" name="key" id="searchName"
+                     placeholder="Search" aria-label="Search">
+              </form>
+            </span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <table class="table table-striped table-hover" id="projects">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody *ngFor="let project of projects">
+        <tr>
+          <td>{{ project.name }}</td>
+          <td>{{ project.description }}</td>
+          <td>
+                                  <span class="badge"
+                                        [ngClass]="[project.status === Status.COMPLETED ? ' badge-success' : ' badge-danger']">
+                                    {{ project.status === Status.COMPLETED ? 'COMPLETED' : 'IN PROGRESS' }}
+                                  </span>
+          </td>
+          <td>
+            <a [hidden]="!isAdmin" (click)="onOpenModal(project, 'delete')" class="delete" data-toggle="modal"
+               style="cursor: pointer;"><i class="material-icons" data-toggle="tooltip"
+                                           title="Delete">&#xE872;</i></a>
+            <a (click)="onOpenModal(project, 'edit')" href="#updateProjectModal" class="nav-list" data-toggle="modal"
+               style="cursor: pointer;"><i class="material-icons" data-toggle="tooltip"
+                                           title="Edit Project">&#xe150;</i></a>
+            <a routerLink="/project/{{project.id}}" class="nav-list" data-toggle="modal"
+               style="cursor: pointer;"><i class="material-icons" data-toggle="tooltip"
+                                           title="Employee List">&#xef42;</i></a>
+          </td>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Add project Modal HTML -->
+<div [hidden]="!isAdmin" id="addProjectModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form #projectAddForm="ngForm" (ngSubmit)="onAddProject(projectAddForm)">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Project</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Project name</label>
+            <input type="text" ngModel name="name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" ngModel name="description" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" ngModel="SERVER_DOWN" class="form-control" required>
+              <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="COMPLETED">COMPLETED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employees">Select employees for project:</label>
+            <select name="employees" ngModel=""  class="form-control" id="employees" multiple>
+              <option *ngFor="let employee of employees"
+                      [value]="employee"
+                      [selected]="employee">{{employee.lastName}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="add-project-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button [disabled]="projectAddForm.invalid" type="submit" class="btn btn-primary">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--Edit Project Modal-->
+<div id="updateProjectModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form #projectEditForm="ngForm" (ngSubmit)="onUpdateProject(projectEditForm.value)">
+        <div class="modal-header">
+          <h4 class="modal-title">Update Project</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Name</label>
+            <input type="text" ngModel="{{editProject?.name}}" name="name" class="form-control" required>
+          </div>
+          <input type="hidden" ngModel="{{editProject?.id}}" name="id" class="form-control" id="id"
+                 placeholder="Email">
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" ngModel="{{editProject?.description}}" name="description" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" ngModel="SERVER_DOWN" class="form-control" required>
+              <option value="IN_PROGRESS">IN PROGRESS</option>
+              <option value="COMPLETED">COMPLETED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="employees">Select employees for project:</label>
+            <select name="employees" ngModel="{{editProject?.employees}}"  class="form-control" id="editedEmployees" multiple>
+              <option *ngFor="let employee of employees"
+                      [value]="employee"
+                      [selected]="employee">{{employee.lastName}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="edit-project-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button [disabled]="projectEditForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Project Modal -->
+<div [hidden]="!isAdmin" class="modal fade" id="deleteProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModelLabel">Delete Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete project {{deleteProject?.name}}?</p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button (click)="onDeleteProject(deleteProject?.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

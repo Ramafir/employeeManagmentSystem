@@ -1,0 +1,51 @@
+<div class="container-xl">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-6">
+            <h2>List of Employees in Project</h2>
+          </div>
+          <div class="col-sm-6">
+            <div class="col-12">
+              <div class="text-right">
+                <p>First Name: {{employee?.firstName}}</p>
+                <p>Last Name: {{employee?.lastName}}</p>
+                <p>Email: {{employee?.email}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> <br>
+          <div class="col-md-12 single-note-item text-center">
+          </div>
+
+          <table class="table table-striped table-hover" id="employeeProjects">
+            <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Employees in Project</th>
+            </tr>
+            </thead>
+            <tbody *ngFor="let project of employeeProjects" >
+            <tr>
+              <td>{{ project?.name }}</td>
+              <td>{{ project?.description }}</td>
+              <td>{{ project?.status }}</td>
+              <td>{{ project?.employees.push() }}</td>
+            </tbody>
+          </table>
+      <div *ngIf="employee?.projects.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+        <div class="alert alert-info" role="alert">
+          <h4 class="alert-heading">NO PROJECTS!</h4>
+          <p>No projects were found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<notifier-container></notifier-container>
+
